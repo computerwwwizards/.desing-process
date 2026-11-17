@@ -155,4 +155,162 @@ const html = `<!DOCTYPE html>
       color: #ffffff;
     }
     .tab-title {
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
+    }
+    .tab-close {
+      margin-left: 0.5rem; color: var(--text-muted); cursor: pointer; font-weight: bold; font-size: 1.1rem; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+    }
+    .tab-close:hover { color: #ff6b6b; background: rgba(255,255,255,0.1); }
+
+    #iframes-container {
+      flex: 1;
+      position: relative;
+      background-color: var(--bg-base);
+    }
+    .iframe-wrapper {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      display: none;
+    }
+    .iframe-wrapper.active { display: block; }
+    iframe { width: 100%; height: 100%; border: none; }
+    
+    .empty-state {
+      display: flex; align-items: center; justify-content: center; height: 100%;
+      color: var(--text-muted); font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      #mobile-header { display: flex; }
+      #sidebar {
+        position: absolute; top: 61px; bottom: 0; left: 0;
+        transform: translateX(-100%);
+        border-right: none;
+        box-shadow: 4px 0 15px rgba(0,0,0,0.5);
+      }
+      #sidebar.open { transform: translateX(0); }
+      #workspace { height: calc(100vh - 61px); }
+    }
+  </style>
+</head>
+<body>
+  
+  <div id="mobile-header">
+    <button id="menu-btn">☰</button>
+    <div style="font-weight: 600; color: var(--accent);">C-K Catalog</div>
+  </div>
+
+  <aside id="sidebar">
+    <div class="sidebar-header">Catalogs</div>
+    <ul id="catalog-list"></ul>
+  </aside>
+
+  <main id="workspace">
+    <div id="tabs-bar"></div>
+    <div id="iframes-container">
+      <div class="empty-state" id="empty-state">Select a catalog from the sidebar to open.</div>
+    </div>
+  </main>
+
+  <script>
+    const BASE_URL = "https://computerwwwizards.github.io/c-k#";
+    const items = ${JSON.stringify(catalogItems)};
+    
+    const tabsBar = document.getElementById('tabs-bar');
+    const iframesContainer = document.getElementById('iframes-container');
+    const catalogList = document.getElementById('catalog-list');
+    const emptyState = document.getElementById('empty-state');
+    
+    const sidebar = document.getElementById('sidebar');
+    document.getElementById('menu-btn').addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+
+    let openTabs = [];
+    let activeTabId = null;
+
+    function renderSidebar() {
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'catalog-item';
+        li.textContent = item.name;
+        li.onclick = () => {
+          openTab(item);
+          if (window.innerWidth <= 768) sidebar.classList.remove('open');
+        };
+        catalogList.appendChild(li);
+      });
+    }
+
+    function openTab(item) {
+      if (!openTabs.find(t => t.id === item.id)) {
+        openTabs.push(item);
+        
+        const wrapper = document.createElement('div');
+        wrapper.className = 'iframe-wrapper';
+        wrapper.id = 'wrapper-' + item.id;
+        
+        const iframe = document.createElement('iframe');
+        iframe.src = BASE_URL + item.hash;
+        wrapper.appendChild(iframe);
+        iframesContainer.appendChild(wrapper);
+      }
+      setActiveTab(item.id);
+      renderTabs();
+    }
+
+    function closeTab(e, id) {
+      e.stopPropagation();
+      openTabs = openTabs.filter(t => t.id !== id);
+      document.getElementById('wrapper-' + id).remove();
+      
+      if (activeTabId === id) {
+        activeTabId = openTabs.length ? openTabs[openTabs.length - 1].id : null;
+      }
+      setActiveTab(activeTabId);
+      renderTabs();
+    }
+
+    function setActiveTab(id) {
+      activeTabId = id;
+      document.querySelectorAll('.iframe-wrapper').forEach(el => el.classList.remove('active'));
+      
+      if (id) {
+        document.getElementById('wrapper-' + id).classList.add('active');
+        emptyState.style.display = 'none';
+      } else {
+        emptyState.style.display = 'flex';
+      }
+    }
+
+    function renderTabs() {
+      tabsBar.innerHTML = '';
+      openTabs.forEach(tab => {
+        const el = document.createElement('div');
+        el.className = 'tab' + (tab.id === activeTabId ? ' active' : '');
+        el.onclick = () => {
+          setActiveTab(tab.id);
+          renderTabs();
+        };
+        
+        const title = document.createElement('span');
+        title.className = 'tab-title';
+        title.textContent = tab.name;
+        
+        const close = document.createElement('span');
+        close.className = 'tab-close';
+        close.innerHTML = '&times;';
+        close.onclick = (e) => closeTab(e, tab.id);
+        
+        el.appendChild(title);
+        el.appendChild(close);
+        tabsBar.appendChild(el);
+      });
+    }
+
+    renderSidebar();
+  </script>
+</body>
+</html>`;
+
+fs.writeFileSync(path.join(outDir, 'index.html'), html);
