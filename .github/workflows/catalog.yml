@@ -1,0 +1,48 @@
+name: Catalog Shell App
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'catalog/**'
+      - 'build.js'
+      - '.github/workflows/catalog.yml'
+  workflow_dispatch:
+
+jobs:
+  build_job:
+    name: Build & Aggregate Catalog
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '26'
+
+      - name: Build HTML Shell App
+        run: node build.js
+
+      - name: Upload to Pipeline Artifact Store
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./public
+
+  deploy_job:
+    name: Deploy to GitHub Pages
+    needs: build_job
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Publish Unified Catalog to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
