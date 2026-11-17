@@ -1,0 +1,485 @@
+{
+  "rootId": "c0",
+  "concepts": [
+    {
+      "id": "c0",
+      "label": "C0: Dependency injection principles could be used in any programming paradigm"
+    },
+    {
+      "id": "c1",
+      "label": "C1: There are several ways to decouple that may not share principles with DI",
+      "partition": "expanding"
+    },
+    {
+      "id": "c2",
+      "label": "C2: Programs could tackle very direct coupling (afferences) by creating coupling only in the contract",
+      "partition": "expanding"
+    },
+    {
+      "id": "c3",
+      "label": "C3: Data driven",
+      "partition": "expanding"
+    },
+    {
+      "id": "c4",
+      "label": "C4: Event driven",
+      "partition": "expanding"
+    },
+    {
+      "id": "c5",
+      "label": "C5: This methods can be tracked and relate to some common life cycle management tendency, is an emergent of digital systems",
+      "partition": "expanding"
+    },
+    {
+      "id": "c6",
+      "label": "C6: Even if they had advantages over the other, they are shrouded in some sort of life cycle manager (or state manager, or behavior manager, or impure shell) that tries to be deductive or handle operations making not fittable to some platforms (like web browser platforms)",
+      "partition": "expanding"
+    },
+    {
+      "id": "c7",
+      "label": "C7: We can mix them making the Parametrization by external concerns the ideal design tool for most systems",
+      "partition": "expanding"
+    },
+    {
+      "id": "c8",
+      "label": "C8: This is not fittable with web and even though the system is some sort of impure shell that from time to time needs some plumbing because the abstraction it exposes starts leaking",
+      "partition": "restrictive"
+    },
+    {
+      "id": "c9",
+      "label": "C9: Dependency injection need a lifecycle manager with sympathy for the platform",
+      "partition": "expanding"
+    },
+    {
+      "id": "c10",
+      "label": "C10: Reflection IoCs are bad for performance",
+      "partition": "restrictive"
+    },
+    {
+      "id": "c11",
+      "label": "C11: AOT IoCs have tradeoffs",
+      "partition": "restrictive"
+    },
+    {
+      "id": "c12",
+      "label": "C12: We can ditch completely the Reflection for a token based IoC + a compiler for more flexible code",
+      "partition": "expanding"
+    },
+    {
+      "id": "c13",
+      "label": "C13: We can use Cue as IoC as data",
+      "partition": "expanding"
+    },
+    {
+      "id": "c14",
+      "label": "C14: We can parametrize the IoC behavior to create and extend optimal resolutions of devises both in runtime and build time",
+      "partition": "expanding"
+    },
+    {
+      "id": "c15",
+      "label": "C15: We can use natural prose as intention declaration (like structured markdown) and use bindings to map the intentions to providers for the IoC",
+      "partition": "expanding"
+    },
+    {
+      "id": "c16",
+      "label": "C16: We can use markdown like gauge as prose intention with manual wiring for system metaphors and relaxed LLM code generation",
+      "partition": "expanding"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "k1",
+      "label": "K1: Dependency injection an OOP technique to minimize direct decoupling",
+      "status": "validated"
+    },
+    {
+      "id": "k2",
+      "label": "K2: Coupling exists in any program",
+      "status": "validated"
+    },
+    {
+      "id": "k3",
+      "label": "K3: Functional programming has Functions, HOF and Partial application",
+      "status": "validated"
+    },
+    {
+      "id": "k4",
+      "label": "K4: C++/Rust has Policies as configuration",
+      "status": "validated"
+    },
+    {
+      "id": "k5",
+      "label": "K5: Design by contract",
+      "status": "validated"
+    },
+    {
+      "id": "k6",
+      "label": "K6: Modularization",
+      "status": "validated"
+    },
+    {
+      "id": "k7",
+      "label": "K7: Parametrization by external concerns",
+      "status": "validated"
+    },
+    {
+      "id": "k8",
+      "label": "K8: Black board and tuples",
+      "status": "validated"
+    },
+    {
+      "id": "k9",
+      "label": "K9: ECS",
+      "status": "validated"
+    },
+    {
+      "id": "k10",
+      "label": "K10: FRP",
+      "status": "validated"
+    },
+    {
+      "id": "k11",
+      "label": "K11: Platform and mechanical sympathy",
+      "status": "validated"
+    },
+    {
+      "id": "k12",
+      "label": "K12: Redux failure",
+      "status": "validated"
+    },
+    {
+      "id": "k13",
+      "label": "K13: Inversion of control",
+      "status": "validated"
+    },
+    {
+      "id": "k14",
+      "label": "K14: Very OOP oriented",
+      "status": "validated"
+    },
+    {
+      "id": "k15",
+      "label": "K15: In FP because we lack of a lifecycle manager Effect was invented",
+      "status": "validated"
+    },
+    {
+      "id": "k16",
+      "label": "K16: Reflection runtime based IoCs",
+      "status": "validated"
+    },
+    {
+      "id": "k17",
+      "label": "K17: Native compiled IoCs",
+      "status": "validated"
+    },
+    {
+      "id": "k18",
+      "label": "K18: Native IoCs leave you with no flexibility in runtime",
+      "status": "validated"
+    },
+    {
+      "id": "k19",
+      "label": "K19: Runtimes do optimizations with predictable code (hot paths)",
+      "status": "validated"
+    },
+    {
+      "id": "k20",
+      "label": "K20: IoC as data",
+      "status": "validated"
+    },
+    {
+      "id": "k21",
+      "label": "K21: CloudFlare is actually IoC as data",
+      "status": "validated"
+    },
+    {
+      "id": "k22",
+      "label": "K22: CUE language",
+      "status": "validated"
+    },
+    {
+      "id": "k23",
+      "label": "K23: LLMs are semantic black boxes",
+      "status": "validated"
+    },
+    {
+      "id": "k24",
+      "label": "K24: Architecture description languages",
+      "status": "validated"
+    }
+  ],
+  "links": [
+    {
+      "from": "k1",
+      "to": "c0"
+    },
+    {
+      "from": "c0",
+      "to": "k2"
+    },
+    {
+      "from": "c0",
+      "to": "k3"
+    },
+    {
+      "from": "c0",
+      "to": "k4"
+    },
+    {
+      "from": "c0",
+      "to": "k7"
+    },
+    {
+      "from": "c0",
+      "to": "k11"
+    },
+    {
+      "from": "c0",
+      "to": "c1"
+    },
+    {
+      "from": "c0",
+      "to": "c2"
+    },
+    {
+      "from": "k2",
+      "to": "c1"
+    },
+    {
+      "from": "k3",
+      "to": "c1"
+    },
+    {
+      "from": "k4",
+      "to": "c1"
+    },
+    {
+      "from": "c1",
+      "to": "c3"
+    },
+    {
+      "from": "c1",
+      "to": "c4"
+    },
+    {
+      "from": "c2",
+      "to": "k5"
+    },
+    {
+      "from": "c2",
+      "to": "k6"
+    },
+    {
+      "from": "c2",
+      "to": "k7"
+    },
+    {
+      "from": "c2",
+      "to": "k8"
+    },
+    {
+      "from": "k5",
+      "to": "c2"
+    },
+    {
+      "from": "k6",
+      "to": "c2"
+    },
+    {
+      "from": "c2",
+      "to": "c5"
+    },
+    {
+      "from": "c2",
+      "to": "c7"
+    },
+    {
+      "from": "c5",
+      "to": "k13"
+    },
+    {
+      "from": "c5",
+      "to": "k15"
+    },
+    {
+      "from": "k8",
+      "to": "c5"
+    },
+    {
+      "from": "k7",
+      "to": "c7"
+    },
+    {
+      "from": "c3",
+      "to": "k9"
+    },
+    {
+      "from": "c3",
+      "to": "k10"
+    },
+    {
+      "from": "c3",
+      "to": "c6"
+    },
+    {
+      "from": "c4",
+      "to": "k8"
+    },
+    {
+      "from": "c4",
+      "to": "k10"
+    },
+    {
+      "from": "k9",
+      "to": "c6"
+    },
+    {
+      "from": "k10",
+      "to": "c6"
+    },
+    {
+      "from": "k11",
+      "to": "c6"
+    },
+    {
+      "from": "c6",
+      "to": "c8"
+    },
+    {
+      "from": "k11",
+      "to": "c8"
+    },
+    {
+      "from": "c8",
+      "to": "k12"
+    },
+    {
+      "from": "k12",
+      "to": "c8"
+    },
+    {
+      "from": "c8",
+      "to": "c9"
+    },
+    {
+      "from": "c9",
+      "to": "k13"
+    },
+    {
+      "from": "c9",
+      "to": "c10"
+    },
+    {
+      "from": "k13",
+      "to": "k14"
+    },
+    {
+      "from": "k13",
+      "to": "k15"
+    },
+    {
+      "from": "k13",
+      "to": "k16"
+    },
+    {
+      "from": "k13",
+      "to": "k17"
+    },
+    {
+      "from": "k13",
+      "to": "k19"
+    },
+    {
+      "from": "k14",
+      "to": "k15"
+    },
+    {
+      "from": "k15",
+      "to": "k1"
+    },
+    {
+      "from": "k16",
+      "to": "c10"
+    },
+    {
+      "from": "c10",
+      "to": "k17"
+    },
+    {
+      "from": "c10",
+      "to": "c11"
+    },
+    {
+      "from": "k17",
+      "to": "c11"
+    },
+    {
+      "from": "c11",
+      "to": "k18"
+    },
+    {
+      "from": "c11",
+      "to": "c12"
+    },
+    {
+      "from": "k11",
+      "to": "c12"
+    },
+    {
+      "from": "k18",
+      "to": "c12"
+    },
+    {
+      "from": "k19",
+      "to": "k20"
+    },
+    {
+      "from": "k20",
+      "to": "k21"
+    },
+    {
+      "from": "k20",
+      "to": "c13"
+    },
+    {
+      "from": "k21",
+      "to": "c14"
+    },
+    {
+      "from": "c12",
+      "to": "c13"
+    },
+    {
+      "from": "c12",
+      "to": "c14"
+    },
+    {
+      "from": "c12",
+      "to": "c15"
+    },
+    {
+      "from": "k22",
+      "to": "c13"
+    },
+    {
+      "from": "k22",
+      "to": "c14"
+    },
+    {
+      "from": "c14",
+      "to": "c16"
+    },
+    {
+      "from": "c15",
+      "to": "k24"
+    },
+    {
+      "from": "k23",
+      "to": "c16"
+    },
+    {
+      "from": "k24",
+      "to": "c16"
+    }
+  ]
+}
