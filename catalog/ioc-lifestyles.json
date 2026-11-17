@@ -1,0 +1,102 @@
+{
+  "rootId": "c0",
+  "concepts": [
+    {
+      "id": "c0",
+      "label": "c0: IoC containers that do not prescribe how to handle the lifestyles but allow us to define our own resolvers of lifestyles"
+    },
+    {
+      "id": "c1",
+      "label": "c1: Also, we can ship some defaults but not built in, some default configurations to reuse",
+      "partition": "expansive"
+    },
+    {
+      "id": "c2",
+      "label": "c2: We need to also provide a way to configure clear rules of which Lifestyle precedes another but this MUST not be opaque."
+    },
+    {
+      "id": "c3",
+      "label": "c3: We need to be able to configure the  lifestyle rules how to resolve a reference"
+    },
+    {
+      "id": "c4",
+      "label": "c4: We need to be bale to configure in non opaque way the teardown mechanics"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "k0",
+      "label": "k0: IoC containers have different pre defined ways to resolve the scope and life cycle of an instance",
+      "status": "validated"
+    },
+    {
+      "id": "k1",
+      "label": "k1: There is not a single IoC formal spec, this each implementation has different ways to calculate how to manage the dependencies",
+      "status": "validated"
+    },
+    {
+      "id": "k11",
+      "label": "k11: Within specific ecosystems, language-level formal specifications do exist. For example, Java has JSR-330 (jakarta.inject) and CDI / JSR-299/365 (jakarta.enterprise.context), and PHP has PSR-11 (ContainerInterface). Even when frameworks follow these specs, their underlying resolution mechanics and edge-case behaviors still differ.",
+      "status": "validated"
+    },
+    {
+      "id": "k2",
+      "label": "k2: Some bugs related to memory leaks and object explosion exist in some IoCs because of how scopes are handled by the implementation liek .NET's built-in DI or Castle Windsor captive depdency problems",
+      "status": "validated"
+    },
+    {
+      "id": "k3",
+      "label": "k3: Even with configuration on how to manage the lifestyle of a specific reference, this reference depends on others that may have other lifestyles that contradict the dependent or generate behaviors that cause memory leaks"
+    }
+  ],
+  "links": [
+    {
+      "from": "c0",
+      "to": "c1"
+    },
+    {
+      "from": "k2",
+      "to": "k3"
+    },
+    {
+      "from": "k3",
+      "to": "c2"
+    },
+    {
+      "from": "c1",
+      "to": "c2"
+    },
+    {
+      "from": "c1",
+      "to": "c3"
+    },
+    {
+      "from": "c1",
+      "to": "c4"
+    },
+    {
+      "from": "k0",
+      "to": "c0"
+    },
+    {
+      "from": "k1",
+      "to": "c0"
+    },
+    {
+      "from": "k2",
+      "to": "c0"
+    },
+    {
+      "from": "k0",
+      "to": "k2"
+    },
+    {
+      "from": "k1",
+      "to": "k11"
+    },
+    {
+      "from": "k11",
+      "to": "k2"
+    }
+  ]
+}
