@@ -9,7 +9,6 @@ if (!fs.existsSync(outDir)) {
   fs.mkdirSync(outDir, { recursive: true });
 }
 
-// Exact packing mapping for C-K domain
 function pack(domain, coords) {
   const c = (domain.concepts || []).map(n => [n.id, n.label || "", n.partition || ""]);
   const k = (domain.knowledge || []).map(n => [n.id, n.label || "", n.status || ""]);
@@ -30,16 +29,13 @@ if (fs.existsSync(catalogDir)) {
     const coords = data.coords || {};
 
     const packed = pack(domain, coords);
-    const jsonStr = JSON.stringify(packed);
     
-    // Node.js exact equivalent to CompressionStream('deflate-raw') + base64url
-    const buffer = zlib.deflateRawSync(Buffer.from(jsonStr));
+    const buffer = zlib.deflateRawSync(Buffer.from(JSON.stringify(packed)));
     const hash = buffer.toString('base64')
       .replace(/\+/g, '-')
       .replace(/\//g, '_')
       .replace(/=+$/, '');
       
-    // kebab-case to Title Case (e.g. some-catalog-item.json -> Some Catalog Item)
     const name = file.replace('.json', '')
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -49,147 +45,53 @@ if (fs.existsSync(catalogDir)) {
   }
 }
 
-const html = `<!DOCTYPE html>
+// Safely stored as a string to prevent literal parsing errors
+const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>C-K Catalog Workspace</title>
   <style>
-    :root {
-      --bg-base: #191919;
-      --bg-panel: #242424;
-      --bg-tab: #2d2d2d;
-      --bg-active: #383838;
-      --bg-hover: #333333;
-      --text-main: #e0e0e0;
-      --text-muted: #888888;
-      --border: #404040;
-      --accent: #d4a373;
-    }
-    
+    :root { --bg-base: #191919; --bg-panel: #242424; --bg-tab: #2d2d2d; --bg-active: #383838; --bg-hover: #333333; --text-main: #e0e0e0; --text-muted: #888888; --border: #404040; --accent: #d4a373; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background-color: var(--bg-base);
-      color: var(--text-main);
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
+    body { font-family: system-ui, -apple-system, sans-serif; background-color: var(--bg-base); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+    
+    #mobile-header { display: none; background: var(--bg-panel); padding: 1rem; border-bottom: 1px solid var(--border); align-items: center; }
+    #menu-btn { background: none; border: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer; margin-right: 1rem; }
+    
+    #sidebar { width: 280px; background-color: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; transition: transform 0.3s ease; z-index: 100; }
+    .sidebar-header { padding: 1.25rem 1rem; border-bottom: 1px solid var(--border); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; font-size: 0.85rem; color: var(--accent); }
+    
+    #search-container { padding: 1rem; border-bottom: 1px solid var(--border); }
+    #search-input { width: 100%; padding: 0.6rem 0.8rem; border-radius: 6px; border: 1px solid var(--border); background-color: var(--bg-base); color: var(--text-main); font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
+    #search-input:focus { border-color: var(--accent); }
+    #search-input::placeholder { color: var(--text-muted); }
 
-    #mobile-header {
-      display: none;
-      background: var(--bg-panel);
-      padding: 1rem;
-      border-bottom: 1px solid var(--border);
-      align-items: center;
-    }
-    #menu-btn {
-      background: none; border: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer; margin-right: 1rem;
-    }
-
-    #sidebar {
-      width: 260px;
-      background-color: var(--bg-panel);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-      transition: transform 0.3s ease;
-      z-index: 100;
-    }
-    .sidebar-header {
-      padding: 1.25rem 1rem;
-      border-bottom: 1px solid var(--border);
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      font-size: 0.85rem;
-      color: var(--accent);
-    }
-    #catalog-list {
-      list-style: none;
-      overflow-y: auto;
-      flex: 1;
-    }
-    .catalog-item {
-      padding: 0.85rem 1rem;
-      cursor: pointer;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.95rem;
-      transition: background 0.2s;
-    }
-    .catalog-item:hover { background-color: var(--bg-hover); }
-
-    #workspace {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    #tabs-bar {
-      display: flex;
-      background-color: var(--bg-panel);
-      border-bottom: 1px solid var(--border);
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
+    #catalog-list { list-style: none; overflow-y: auto; flex: 1; padding: 0.75rem; }
+    .catalog-item { padding: 0.75rem 1rem; margin-bottom: 0.5rem; cursor: pointer; border-radius: 6px; background-color: var(--bg-tab); border: 1px solid transparent; font-size: 0.95rem; font-weight: 500; transition: all 0.2s ease; display: block; user-select: none; }
+    .catalog-item:hover { background-color: var(--bg-hover); border-color: var(--border); transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .catalog-item:active { transform: translateY(0); }
+    
+    #workspace { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    #tabs-bar { display: flex; background-color: var(--bg-panel); border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
     #tabs-bar::-webkit-scrollbar { display: none; }
-    .tab {
-      display: flex;
-      align-items: center;
-      padding: 0.75rem 1.25rem;
-      background-color: var(--bg-tab);
-      border-right: 1px solid var(--border);
-      cursor: pointer;
-      min-width: 140px;
-      max-width: 220px;
-      font-size: 0.9rem;
-      user-select: none;
-    }
-    .tab.active {
-      background-color: var(--bg-active);
-      border-bottom: 2px solid var(--accent);
-      color: #ffffff;
-    }
-    .tab-title {
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
-    }
-    .tab-close {
-      margin-left: 0.5rem; color: var(--text-muted); cursor: pointer; font-weight: bold; font-size: 1.1rem; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
-    }
+    .tab { display: flex; align-items: center; padding: 0.75rem 1.25rem; background-color: var(--bg-tab); border-right: 1px solid var(--border); cursor: pointer; min-width: 140px; max-width: 220px; font-size: 0.9rem; user-select: none; transition: background 0.2s; }
+    .tab.active { background-color: var(--bg-active); border-bottom: 2px solid var(--accent); color: #ffffff; }
+    .tab-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+    .tab-close { margin-left: 0.5rem; color: var(--text-muted); cursor: pointer; font-weight: bold; font-size: 1.1rem; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
     .tab-close:hover { color: #ff6b6b; background: rgba(255,255,255,0.1); }
-
-    #iframes-container {
-      flex: 1;
-      position: relative;
-      background-color: var(--bg-base);
-    }
-    .iframe-wrapper {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      display: none;
-    }
+    
+    #iframes-container { flex: 1; position: relative; background-color: var(--bg-base); }
+    .iframe-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
     .iframe-wrapper.active { display: block; }
     iframe { width: 100%; height: 100%; border: none; }
+    .empty-state { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); font-size: 1.1rem; }
     
-    .empty-state {
-      display: flex; align-items: center; justify-content: center; height: 100%;
-      color: var(--text-muted); font-size: 1.1rem;
-    }
-
     @media (max-width: 768px) {
-      body { flex-direction: column; }
-      #mobile-header { display: flex; }
-      #sidebar {
-        position: absolute; top: 61px; bottom: 0; left: 0;
-        transform: translateX(-100%);
-        border-right: none;
-        box-shadow: 4px 0 15px rgba(0,0,0,0.5);
-      }
-      #sidebar.open { transform: translateX(0); }
-      #workspace { height: calc(100vh - 61px); }
+      body { flex-direction: column; } #mobile-header { display: flex; }
+      #sidebar { position: absolute; top: 61px; bottom: 0; left: 0; transform: translateX(-100%); border-right: none; box-shadow: 4px 0 15px rgba(0,0,0,0.5); }
+      #sidebar.open { transform: translateX(0); } #workspace { height: calc(100vh - 61px); }
     }
   </style>
 </head>
@@ -202,6 +104,9 @@ const html = `<!DOCTYPE html>
 
   <aside id="sidebar">
     <div class="sidebar-header">Catalogs</div>
+    <div id="search-container">
+      <input type="text" id="search-input" placeholder="Search catalogs..." autocomplete="off" spellcheck="false">
+    </div>
     <ul id="catalog-list"></ul>
   </aside>
 
@@ -214,12 +119,13 @@ const html = `<!DOCTYPE html>
 
   <script>
     const BASE_URL = "https://computerwwwizards.github.io/c-k#";
-    const items = ${JSON.stringify(catalogItems)};
+    const items = /* DATA_PAYLOAD */;
     
     const tabsBar = document.getElementById('tabs-bar');
     const iframesContainer = document.getElementById('iframes-container');
     const catalogList = document.getElementById('catalog-list');
     const emptyState = document.getElementById('empty-state');
+    const searchInput = document.getElementById('search-input');
     
     const sidebar = document.getElementById('sidebar');
     document.getElementById('menu-btn').addEventListener('click', () => {
@@ -234,6 +140,7 @@ const html = `<!DOCTYPE html>
         const li = document.createElement('li');
         li.className = 'catalog-item';
         li.textContent = item.name;
+        li.dataset.searchName = item.name.toLowerCase(); // Cache for faster search
         li.onclick = () => {
           openTab(item);
           if (window.innerWidth <= 768) sidebar.classList.remove('open');
@@ -241,6 +148,19 @@ const html = `<!DOCTYPE html>
         catalogList.appendChild(li);
       });
     }
+
+    // Real-time search filter
+    searchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      const nodes = catalogList.querySelectorAll('.catalog-item');
+      nodes.forEach(node => {
+        if (node.dataset.searchName.includes(term)) {
+          node.style.display = 'block';
+        } else {
+          node.style.display = 'none';
+        }
+      });
+    });
 
     function openTab(item) {
       if (!openTabs.find(t => t.id === item.id)) {
@@ -313,4 +233,5 @@ const html = `<!DOCTYPE html>
 </body>
 </html>`;
 
-fs.writeFileSync(path.join(outDir, 'index.html'), html);
+const finalHtml = htmlTemplate.replace('/* DATA_PAYLOAD */', JSON.stringify(catalogItems));
+fs.writeFileSync(path.join(outDir, 'index.html'), finalHtml);
