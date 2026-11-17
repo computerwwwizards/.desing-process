@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org",
+  "$id": "https://example.com",
+  "title": "C-K Theory Concept-Knowledge Graph",
+  "description": "Schema representing a Concept-Knowledge (C-K) design theory graph with concepts, knowledge items, and directional links.",
+  "type": "object",
+  "required": [
+    "rootId",
+    "concepts",
+    "knowledge",
+    "links"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "rootId": {
+      "type": "string",
+      "description": "The ID of the root concept node.",
+      "pattern": "^c[0-9]+$"
+    },
+    "concepts": {
+      "type": "array",
+      "description": "List of concept nodes (C-space).",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the concept.",
+            "pattern": "^c[0-9]+$"
+          },
+          "label": {
+            "type": "string",
+            "description": "Descriptive label for the concept.",
+            "minLength": 1
+          },
+          "partition": {
+            "type": "string",
+            "description": "Partition type in C-K theory (omitted for the root concept).",
+            "enum": [
+              "expansive",
+              "restrictive"
+            ]
+          }
+        }
+      }
+    },
+    "knowledge": {
+      "type": "array",
+      "description": "List of knowledge nodes (K-space).",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "status"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the knowledge item.",
+            "pattern": "^k[0-9]+$"
+          },
+          "label": {
+            "type": "string",
+            "description": "Descriptive label for the knowledge item.",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "description": "Validation status of the knowledge item.",
+            "enum": [
+              "validated",
+              "pending"
+            ]
+          }
+        }
+      }
+    },
+    "links": {
+      "type": "array",
+      "description": "Directional relationships between concepts and knowledge nodes.",
+      "items": {
+        "type": "object",
+        "required": [
+          "from",
+          "to"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "from": {
+            "type": "string",
+            "description": "Source node ID (concept or knowledge).",
+            "pattern": "^[ck][0-9]+$"
+          },
+          "to": {
+            "type": "string",
+            "description": "Target node ID (concept or knowledge).",
+            "pattern": "^[ck][0-9]+$"
+          }
+        }
+      }
+    }
+  }
+}
