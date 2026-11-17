@@ -36,16 +36,17 @@ if (fs.existsSync(catalogDir)) {
       .replace(/\//g, '_')
       .replace(/=+$/, '');
       
-    const name = file.replace('.json', '')
+    // Use the clean slug as the ID for prettier URLs (e.g., "my-catalog")
+    const slug = file.replace('.json', '');
+    const name = slug
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
 
-    catalogItems.push({ id: file, name, hash });
+    catalogItems.push({ id: slug, name, hash });
   }
 }
 
-// Safely stored as a string to prevent literal parsing errors
 const htmlTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -140,7 +141,7 @@ const htmlTemplate = `<!DOCTYPE html>
         const li = document.createElement('li');
         li.className = 'catalog-item';
         li.textContent = item.name;
-        li.dataset.searchName = item.name.toLowerCase(); // Cache for faster search
+        li.dataset.searchName = item.name.toLowerCase();
         li.onclick = () => {
           openTab(item);
           if (window.innerWidth <= 768) sidebar.classList.remove('open');
@@ -149,7 +150,6 @@ const htmlTemplate = `<!DOCTYPE html>
       });
     }
 
-    // Real-time search filter
     searchInput.addEventListener('input', (e) => {
       const term = e.target.value.toLowerCase();
       const nodes = catalogList.querySelectorAll('.catalog-item');
@@ -162,7 +162,23 @@ const htmlTemplate = `<!DOCTYPE html>
       });
     });
 
-    function openTab(item) {
+    function updateUrlState() {
+      const tabIds = openTabs.map(t => t.id).join(',');
+      const url = new URL(window.location);
+      
+      if (tabIds) {
+        url.searchParams.set('tabs', tabIds);
+        if (activeTabId) url.searchParams.set('active', activeTabId);
+      } else {
+        url.searchParams.delete('tabs');
+        url.searchParams.delete('active');
+      }
+      
+      // Update URL without reloading the page
+      window.history.replaceState(null, '', url);
+    }
+
+    function openTab(item, saveState = true) {
       if (!openTabs.find(t => t.id === item.id)) {
         openTabs.push(item);
         
@@ -175,8 +191,10 @@ const htmlTemplate = `<!DOCTYPE html>
         wrapper.appendChild(iframe);
         iframesContainer.appendChild(wrapper);
       }
-      setActiveTab(item.id);
+      setActiveTab(item.id, false); // We handle saveState at the end of openTab
       renderTabs();
+      
+      if (saveState) updateUrlState();
     }
 
     function closeTab(e, id) {
@@ -187,11 +205,12 @@ const htmlTemplate = `<!DOCTYPE html>
       if (activeTabId === id) {
         activeTabId = openTabs.length ? openTabs[openTabs.length - 1].id : null;
       }
-      setActiveTab(activeTabId);
+      setActiveTab(activeTabId, false);
       renderTabs();
+      updateUrlState();
     }
 
-    function setActiveTab(id) {
+    function setActiveTab(id, saveState = true) {
       activeTabId = id;
       document.querySelectorAll('.iframe-wrapper').forEach(el => el.classList.remove('active'));
       
@@ -201,17 +220,24 @@ const htmlTemplate = `<!DOCTYPE html>
       } else {
         emptyState.style.display = 'flex';
       }
+      
+      if (saveState) updateUrlState();
+      
+      // Re-render to update visual active state on tabs
+      renderTabs(false);
     }
 
-    function renderTabs() {
+    function renderTabs(attachEvents = true) {
       tabsBar.innerHTML = '';
       openTabs.forEach(tab => {
         const el = document.createElement('div');
         el.className = 'tab' + (tab.id === activeTabId ? ' active' : '');
-        el.onclick = () => {
-          setActiveTab(tab.id);
-          renderTabs();
-        };
+        
+        if (attachEvents) {
+          el.onclick = () => {
+            setActiveTab(tab.id);
+          };
+        }
         
         const title = document.createElement('span');
         title.className = 'tab-title';
@@ -220,7 +246,9 @@ const htmlTemplate = `<!DOCTYPE html>
         const close = document.createElement('span');
         close.className = 'tab-close';
         close.innerHTML = '&times;';
-        close.onclick = (e) => closeTab(e, tab.id);
+        if (attachEvents) {
+          close.onclick = (e) => closeTab(e, tab.id);
+        }
         
         el.appendChild(title);
         el.appendChild(close);
@@ -228,7 +256,35 @@ const htmlTemplate = `<!DOCTYPE html>
       });
     }
 
-    renderSidebar();
+    function loadInitialState() {
+      renderSidebar();
+      
+      const params = new URLSearchParams(window.location.search);
+      const tabsParam = params.get('tabs');
+      const activeParam = params.get('active');
+      
+      if (tabsParam) {
+        const tabIds = tabsParam.split(',');
+        tabIds.forEach(id => {
+          const item = items.find(i => i.id === id);
+          if (item) {
+            openTab(item, false); // Open without writing to history yet
+          }
+        });
+        
+        if (activeParam && openTabs.find(t => t.id === activeParam)) {
+          setActiveTab(activeParam, false);
+        } else if (openTabs.length > 0) {
+          setActiveTab(openTabs[openTabs.length - 1].id, false);
+        }
+        
+        renderTabs();
+        updateUrlState(); // Normalize the URL in case invalid IDs were passed
+      }
+    }
+
+    // Initialize application
+    loadInitialState();
   </script>
 </body>
 </html>`;
