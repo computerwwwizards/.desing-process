@@ -7,31 +7,62 @@
     },
     {
       "id": "c1",
-      "label": "c1: Also, we can ship some defaults but not built in, some default configurations to reuse",
-      "partition": "expansive"
+      "label": "c1: Also, we can ship some defaults but not built in, some default configurations to reuse"
     },
     {
       "id": "c2",
-      "label": "c2: We need to also provide a way to configure clear rules of which Lifestyle precedes another but this MUST not be opaque."
+      "label": "c2: We need to also provide a way to configure clear rules of which lifestyle precedes another but this MUST not be opaque."
     },
     {
       "id": "c3",
-      "label": "c3: We need to be able to configure the  lifestyle rules how to resolve a reference"
+      "label": "c3: We need to be able to configure the lifestyle rules how to resolve a reference"
     },
     {
       "id": "c4",
-      "label": "c4: We need to be bale to configure in non opaque way the teardown mechanics"
+      "label": "c4: We need to be able to configure in a non-opaque way the teardown mechanics"
+    },
+    {
+      "id": "c22",
+      "label": "c22: Lifestyles could collide and it is needed not only for their precedence to be stated but also the invariants"
+    },
+    {
+      "id": "c23",
+      "label": "c23: We need a way to avoid errors AOT with compilation tools"
+    },
+    {
+      "id": "c24",
+      "label": "c24: We need to configure what happens when a runtime error occurs"
+    },
+    {
+      "id": "c25",
+      "label": "c25: We need to configure fallbacks for runtime errors and let fail hard others"
+    },
+    {
+      "id": "c26",
+      "label": "c26: Lifestyle configurations should provide as a result a clear precedence and collisions that are computable and verifiable"
+    },
+    {
+      "id": "c27",
+      "label": "c27: Lifestyle precedence configurations should be frozen from the start"
+    },
+    {
+      "id": "c28",
+      "label": "c28: Lifestyle precedence configurations can change at runtime"
+    },
+    {
+      "id": "c29",
+      "label": "c29: Lifestyle precedence can provide either violations and allowances or both."
     }
   ],
   "knowledge": [
     {
       "id": "k0",
-      "label": "k0: IoC containers have different pre defined ways to resolve the scope and life cycle of an instance",
+      "label": "k0: IoC containers have different predefined ways to resolve the scope and life cycle of an instance",
       "status": "validated"
     },
     {
       "id": "k1",
-      "label": "k1: There is not a single IoC formal spec, this each implementation has different ways to calculate how to manage the dependencies",
+      "label": "k1: There is not a single IoC formal spec, thus each implementation has different ways to calculate how to manage the dependencies",
       "status": "validated"
     },
     {
@@ -41,39 +72,56 @@
     },
     {
       "id": "k2",
-      "label": "k2: Some bugs related to memory leaks and object explosion exist in some IoCs because of how scopes are handled by the implementation liek .NET's built-in DI or Castle Windsor captive depdency problems",
+      "label": "k2: Some bugs related to memory leaks and object explosion exist in some IoCs because of how scopes are handled by the implementation, like .NET's built-in DI or Castle Windsor captive dependency problems, though this is part of the problem",
       "status": "validated"
     },
     {
       "id": "k3",
-      "label": "k3: Even with configuration on how to manage the lifestyle of a specific reference, this reference depends on others that may have other lifestyles that contradict the dependent or generate behaviors that cause memory leaks"
+      "label": "k3: Even with configuration on how to manage the lifestyle of a specific reference, this reference depends on others that may have other lifestyles that contradict the dependee or generate behaviors that cause memory leaks",
+      "status": "validated"
+    },
+    {
+      "id": "k4",
+      "label": "k4: Precedence rules for computers by doing operations in mathematics",
+      "status": "validated"
+    },
+    {
+      "id": "k5",
+      "label": "k5: Errors can be handled by avoiding compilation",
+      "status": "validated"
+    },
+    {
+      "id": "k6",
+      "label": "k6: Errors can happen at runtime",
+      "status": "validated"
+    },
+    {
+      "id": "k7",
+      "label": "k7: Can have fallbacks or fail hard as possible",
+      "status": "validated"
+    },
+    {
+      "id": "k8",
+      "label": "k8: Changing state in mid-execution could lead to race conditions; even if we create semaphores, it would be difficult to debug",
+      "status": "validated"
+    },
+    {
+      "id": "k9",
+      "label": "k9: Firewall engine configuration",
+      "status": "validated"
+    },
+    {
+      "id": "k10",
+      "label": "k10: Ashby's law, only variety can absorb variety",
+      "status": "validated"
+    },
+    {
+      "id": "k12",
+      "label": "k11: Complicated engine, closed for now",
+      "status": "validated"
     }
   ],
   "links": [
-    {
-      "from": "c0",
-      "to": "c1"
-    },
-    {
-      "from": "k2",
-      "to": "k3"
-    },
-    {
-      "from": "k3",
-      "to": "c2"
-    },
-    {
-      "from": "c1",
-      "to": "c2"
-    },
-    {
-      "from": "c1",
-      "to": "c3"
-    },
-    {
-      "from": "c1",
-      "to": "c4"
-    },
     {
       "from": "k0",
       "to": "c0"
@@ -85,10 +133,6 @@
     {
       "from": "k2",
       "to": "c0"
-    },
-    {
-      "from": "k0",
-      "to": "k2"
     },
     {
       "from": "k1",
@@ -97,6 +141,126 @@
     {
       "from": "k11",
       "to": "k2"
+    },
+    {
+      "from": "c0",
+      "to": "c1"
+    },
+    {
+      "from": "c1",
+      "to": "c4"
+    },
+    {
+      "from": "c1",
+      "to": "c3"
+    },
+    {
+      "from": "c1",
+      "to": "c2"
+    },
+    {
+      "from": "c1",
+      "to": "k3"
+    },
+    {
+      "from": "k3",
+      "to": "c2"
+    },
+    {
+      "from": "c2",
+      "to": "k4"
+    },
+    {
+      "from": "c2",
+      "to": "c26"
+    },
+    {
+      "from": "k4",
+      "to": "c26"
+    },
+    {
+      "from": "c2",
+      "to": "c22"
+    },
+    {
+      "from": "k4",
+      "to": "c22"
+    },
+    {
+      "from": "c22",
+      "to": "c24"
+    },
+    {
+      "from": "c22",
+      "to": "c23"
+    },
+    {
+      "from": "c22",
+      "to": "k5"
+    },
+    {
+      "from": "k5",
+      "to": "k6"
+    },
+    {
+      "from": "k5",
+      "to": "c23"
+    },
+    {
+      "from": "k6",
+      "to": "c24"
+    },
+    {
+      "from": "k6",
+      "to": "k7"
+    },
+    {
+      "from": "c24",
+      "to": "k7"
+    },
+    {
+      "from": "c24",
+      "to": "c25"
+    },
+    {
+      "from": "k7",
+      "to": "c25"
+    },
+    {
+      "from": "c26",
+      "to": "c27"
+    },
+    {
+      "from": "c26",
+      "to": "c28"
+    },
+    {
+      "from": "c26",
+      "to": "c29"
+    },
+    {
+      "from": "c28",
+      "to": "k10"
+    },
+    {
+      "from": "k10",
+      "to": "c29"
+    },
+    {
+      "from": "k10",
+      "to": "k8"
+    },
+    {
+      "from": "c29",
+      "to": "k9"
+    },
+    {
+      "from": "k8",
+      "to": "c27"
+    },
+    {
+      "from": "k8",
+      "to": "k12"
     }
   ]
 }
